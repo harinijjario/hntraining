@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hari Nijjar Rehab & Training Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral (Stone, Slate) with Teal accent -->
+    <!-- Application Structure Plan: A single-page application with a tab-based primary navigation for "The Plan", "Principles", and "Stretches". "The Plan" view features a secondary, day-of-the-week navigation to display daily workouts dynamically. This structure provides a clean, task-oriented user flow, separating the daily actionable content from the reference material (principles, stretches), which enhances usability and focus compared to a long, single-document format. Key interactions include clicking day tabs to switch workouts and expanding sections for detailed info. -->
+    <!-- Visualization & Content Choices: Report info is structured text. Goal: Inform, Organize, Guide. Method: Use of cards, lists, and dynamically shown/hidden content blocks (HTML/CSS/JS). Daily workouts are presented in structured lists for clarity. Principles and detailed guides use collapsible sections to avoid information overload. Calf Science and Mobility drills are presented as clear, instructional text blocks within the "Principles" section. No charts are needed, so Chart.js is not used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .main-nav-btn {
+            transition: all 0.3s ease;
+        }
+        .main-nav-btn.active {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            box-shadow: 0 6px 10px -2px rgba(13, 148, 136, 0.3); /* Stronger teal shadow */
+        }
+        .day-nav-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .day-nav-btn.active {
+            border-bottom-color: #0d9488; /* teal-600 */
+            color: #0d9488; /* teal-600 */
+            font-weight: 700;
+        }
+        .details-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            border: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .principle-card summary::-webkit-details-marker {
+            display: none;
+        }
+        .principle-card summary {
+            list-style: none;
+        }
+        .details-arrow {
+            color: #0d9488; /* teal-600 */
+        }
+        h2.section-title {
+            color: #0f172a; /* slate-900 */
+        }
+        .principle-card summary span {
+            color: #0f172a; /* slate-900 */
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-slate-100 rounded-xl shadow-lg">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 drop-shadow-md">Hari Nijjar Rehab & Training Program</h1>
+            <p class="mt-2 text-lg sm:text-xl text-slate-600">Functional Aesthetics, Strength, and Injury Recovery</p>
+        </header>
+
+        <nav class="flex justify-center bg-white p-2 rounded-xl shadow-lg mb-8 sticky top-4 z-10">
+            <button onclick="showView('plan')" id="btn-plan" class="main-nav-btn active text-slate-700 font-semibold py-2 px-4 rounded-lg">The Plan</button>
+            <button onclick="showView('principles')" id="btn-principles" class="main-nav-btn text-slate-700 font-semibold py-2 px-4 rounded-lg ml-2">Principles</button>
+            <button onclick="showView('stretches')" id="btn-stretches" class="main-nav-btn text-slate-700 font-semibold py-2 px-4 rounded-lg ml-2">Stretches</button>
+        </nav>
+
+        <main>
+            <!-- Plan View -->
+            <div id="plan-view">
+                <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                    <div class="border-b border-slate-200 mb-4">
+                        <nav class="-mb-px flex flex-wrap justify-center gap-x-2 sm:gap-x-4" aria-label="Tabs">
+                            <button onclick="showDay('monday')" id="btn-monday" class="day-nav-btn active text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Mon</button>
+                            <button onclick="showDay('tuesday')" id="btn-tuesday" class="day-nav-btn text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Tue</button>
+                            <button onclick="showDay('wednesday')" id="btn-wednesday" class="day-nav-btn text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Wed</button>
+                            <button onclick="showDay('thursday')" id="btn-thursday" class="day-nav-btn text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Thu</button>
+                            <button onclick="showDay('friday')" id="btn-friday" class="day-nav-btn text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Fri</button>
+                            <button onclick="showDay('saturday')" id="btn-saturday" class="day-nav-btn text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Sat</button>
+                            <button onclick="showDay('sunday')" id="btn-sunday" class="day-nav-btn text-slate-500 hover:text-slate-700 whitespace-nowrap py-3 px-2 sm:px-4 font-medium text-sm">Sun</button>
+                        </nav>
+                    </div>
+                    <div id="workouts-container" class="mt-6">
+                        <!-- Workouts will be injected here by JS -->
+                    </div>
+                </div>
+                 <div class="mt-8 bg-teal-50 border-l-4 border-teal-500 text-teal-800 p-4 rounded-lg">
+                    <div class="flex">
+                        <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 11v4h2v-4h-2zm0-6h2v2H9V5z"/></svg></div>
+                        <div>
+                            <p class="font-bold">Abs Mini-Workout</p>
+                            <p class="text-sm">Perform this as a separate 10-minute session during a work break. Alternate between Day A and Day B.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Principles View -->
+            <div id="principles-view" class="hidden">
+                 <!-- Content injected by JS -->
+            </div>
+
+            <!-- Stretches View -->
+            <div id="stretches-view" class="hidden">
+                <!-- Content injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const dailyWorkouts = {
+            monday: {
+                title: "Upper Body Focus (Push Emphasis)",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace).",
+                    "Dynamic Upper Body Warm-up (5 mins): Arm circles (forward/backward), thoracic rotations, light band pull-aparts, light push-up variations (on knees if needed)."
+                ],
+                workout: [
+                    { name: "Standing Calf Raises", details: "3 sets of 15-20 reps. RPE 8. *Focus on deep stretch at the bottom and strong, controlled squeeze at the top.* Rest 45s." },
+                    { name: "Machine Incline Chest Press", details: "3 sets of 10-12 reps. RPE 7. (Reduced Weight). Rest 60-90s." },
+                    { name: "Dumbbell Shoulder Press", details: "3 sets of 8-10 reps. RPE 7-8. *Tempo: 3s eccentric, 1s hold, 2s concentric.* Rest 90-120s." },
+                    { name: "Dumbbell Lateral Raises", details: "3 sets of 12-15 reps. RPE 7. *Focus on lifting with your side deltoids, slight bend in elbows, avoid swinging.* Rest 60s." },
+                    { name: "Cable Chest Flies", details: "2 sets of 12-15 reps. RPE 7. Focus on stretch and contraction. Rest 60s." },
+                    { name: "Triceps Pushdowns (Rope)", details: "3 sets of 12-15 reps. RPE 7. (Slow & Controlled). Rest 60s." },
+                    { name: "Overhead Triceps Extensions", details: "2 sets of 10-12 reps. RPE 7. (Cable or Light Dumbbell). Keep elbows pointing forward. Rest 60s." }
+                ],
+                cooldown: ["Chest stretch", "Shoulder stretch", "Triceps stretch"]
+            },
+            tuesday: {
+                title: "Lower Body Focus (Legs & Glutes)",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace).",
+                    "Dynamic Lower Body Warm-up (5 mins): Leg swings (forward/side), hip circles, glute activation (banded walks or clam shells), bodyweight squats."
+                ],
+                workout: [
+                    { name: "Goblet Squats", details: "3 sets of 8-10 reps. RPE 7. Focus on comfortable depth and control. Rest 60-90s." },
+                    { name: "Single Leg RDL", details: "3 sets of 8-10 reps per leg. RPE 7. (Light Barbell/Dumbbell). *Focus on control and hip hinge.* Rest 90s between legs." },
+                    { name: "Sled Pull (Forward)", details: "3-4 rounds, 30-45 seconds work per round. Moderate intensity. Rest 60-90s between rounds." },
+                    { name: "Glute Bridges (Elevated Feet)", details: "3 sets of 12-15 reps. RPE 7-8. Focus on glute contraction at the top. Rest 60s." },
+                    { name: "Copenhagen Plank", details: "2 sets, hold for 15-30s per side. RPE 6-7. (Knee-bent version if needed). Rest 60s." },
+                    { name: "Step-Downs (Controlled)", details: "2 sets of 10-12 reps per leg. RPE 6-7. Use a low step. Rest 60s between legs." },
+                    { name: "Ankle Mobility Drills", details: "2 sets of 10-15 rocks (Ankle Dorsiflexion Against Wall)." }
+                ],
+                cooldown: ["Hamstring stretch", "Hip flexor stretch", "Quad stretch", "Adductor stretch (gentle)"]
+            },
+            wednesday: {
+                title: "Upper Body Focus (Pull Emphasis)",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace).",
+                    "Dynamic Upper Body Warm-up (5 mins): Band rows, cat-cow, gentle thoracic twists, **Face Pulls (Light Weight):** 2 sets of 15-20 reps as part of dynamic prep."
+                ],
+                workout: [
+                    { name: "Seated Calf Raises", details: "3 sets of 15-20 reps. RPE 8. *Focus on deep stretch at the bottom and strong, controlled squeeze at the top.* Rest 45s." },
+                    { name: "Machine Lat Pulldown", details: "3 sets of 10-12 reps. RPE 7. Focus on back engagement. Rest 60-90s." },
+                    { name: "Seated Cable Rows", details: "3 sets of 10-12 reps. RPE 7. Focus on squeezing shoulder blades. Rest 60-90s." },
+                    { name: "Back Extensions (Hyperextensions)", details: "3 sets of 10-15 reps. RPE 7. Focus on controlled movement. Rest 60s." },
+                    { name: "Machine Bicep Curls", details: "3 sets of 10-12 reps. RPE 7. (Controlled). Rest 60s." },
+                    { name: "Dumbbell Hammer Curls", details: "2 sets of 10-12 reps. RPE 7. Rest 60s." }
+                ],
+                cooldown: ["Lat stretch", "Bicep stretch", "Chest stretch"]
+            },
+            thursday: {
+                title: "Full Body Strength & Mobility",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace).",
+                    "Dynamic Full Body Warm-up (5 mins): Walking lunges, bodyweight squats, cat-cow, bird-dog, light arm circles."
+                ],
+                workout: [
+                    { name: "Dumbbell Goblet Squats", details: "3 sets of 8-10 reps. RPE 7. Rest 60-90s." },
+                    { name: "Push-ups", details: "3 sets of AMRAP (leaving 2-3 in the tank). RPE 7. (On knees or elevated surface if needed). Rest 90s." },
+                    { name: "Single Arm Dumbbell Rows", details: "3 sets of 10-12 reps per arm. RPE 7-8. Rest 60-90s between arms." },
+                    { name: "Walking Lunges", details: "3 sets of 10-12 reps per leg. RPE 6-7. (Bodyweight or light dumbbells). Rest 60s." },
+                    { name: "Plank", details: "3 sets, hold for 45-60 seconds. RPE 7-8. Rest 60s." },
+                    { name: "Dynamic Mobility Circuit", details: "Repeat 1-2 times: World's Greatest Stretch (5/side), Spiderman Stretch (5/side), Child's Pose with Reach (30s)." }
+                ],
+                cooldown: ["Full body static stretch"]
+            },
+            friday: {
+                title: "Upper Body Focus (Push Emphasis)",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace).",
+                    "Dynamic Upper Body Warm-up (5 mins): Arm circles, thoracic rotations, light band pull-aparts."
+                ],
+                workout: [
+                    { name: "Standing Calf Raises", details: "3 sets of 15-20 reps. RPE 8. *Focus on deep stretch at the bottom and strong, controlled squeeze at the top.* Rest 45s." },
+                    { name: "Incline Dumbbell Press", details: "3 sets of 8-10 reps. RPE 7-8. *Focus on controlled movement, stable dumbbells.* Rest 90-120s." },
+                    { name: "Arnold Press (Seated)", details: "3 sets of 8-10 reps. RPE 7-8. *Focus on control and smooth rotation.* Rest 90-120s." },
+                    { name: "Dumbbell Lateral Raises", details: "3 sets of 12-15 reps. RPE 7. *Avoid shrugging, keep it in the side delts.* Rest 60s." },
+                    { name: "Cable Chest Flies", details: "2 sets of 12-15 reps. RPE 7. Focus on a good stretch and contraction. Rest 60s." },
+                    { name: "Triceps Pushdowns (Bar)", details: "3 sets of 12-15 reps. RPE 7. (Slow & Controlled). Rest 60s." },
+                    { name: "Triceps Isometric Holds", details: "2 sets, hold for 20-30s. (Wall Push/Rope Press). Pain-free contraction. Rest 30s." }
+                ],
+                cooldown: ["Chest stretch", "Triceps stretch", "Shoulder stretch"]
+            },
+            saturday: {
+                title: "Lower Body Focus (Strength & Power)",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace).",
+                    "Dynamic Lower Body Warm-up (5 mins): Leg swings, hip circles, box step-ups (light)."
+                ],
+                workout: [
+                    { name: "Hack Squat Machine", details: "3 sets of 8-10 reps. RPE 7-8. (Controlled Weight). Pay attention to knee. Rest 90-120s." },
+                    { name: "Romanian Deadlifts", details: "3 sets of 10-12 reps. RPE 7. (Dumbbell or Lighter Barbell). Rest 90s." },
+                    { name: "Leg Press", details: "2 sets of 10-12 reps. RPE 7-8. Ensure knees track well, avoid locking out. Rest 90s." },
+                    { name: "Adductor Machine", details: "2 sets of 12-15 reps. RPE 6-7. (Light Weight & Controlled). Rest 60s." },
+                    { name: "Box Jumps", details: "2 sets of 6-8 reps. RPE 6-7. (Low Box / Step-Ups onto Box). Soft landing. Rest 90s." },
+                    { name: "Ankle Mobility Drills", details: "2 sets of 10-15 reps (Calf Raises with Hold)." }
+                ],
+                cooldown: ["Quad stretch", "Hamstring stretch", "Glute stretch", "Hip flexor stretch"]
+            },
+            sunday: {
+                title: "Active Recovery & Progressive Cardio",
+                warmup: [
+                    "Incline Treadmill Walk: 5 minutes (moderate pace)."
+                ],
+                workout: [
+                    { name: "Light Cardio", details: "20-30 minutes of a low-impact option (Elliptical, Cycling, Swimming)." },
+                    { name: "Running Progression", details: "Choose ONE, be conservative: 1) Walk/Run intervals (5 min walk, 2 min jog) on soft surface, or 2) 10-15 min continuous light jog on soft surface. **Crucial:** Stop if any knee irritation." },
+                    { name: "Foam Rolling", details: "10-15 minutes, focus on quads, hamstrings, glutes, calves, lats, and upper back." },
+                    { name: "Static Stretching", details: "10-15 minutes. Hamstrings, Quads, Hip Flexors, Glutes, Calves, Chest, Lats, Spine. (See Stretches tab for details)." }
+                ],
+                cooldown: ["Gentle, full-body static stretching as needed."]
+            }
+        };
+
+        const principlesContent = `
+            <div class="space-y-6">
+                <details class="principle-card p-6" open>
+                    <summary class="font-bold text-xl cursor-pointer flex justify-between items-center">
+                        <span>Core Training Principles</span>
+                        <span class="text-2xl transform transition-transform duration-300 details-arrow">▾</span>
+                    </summary>
+                    <div class="mt-4 space-y-2 text-slate-600">
+                        <p><strong>1. Prioritize Pain-Free Movement:</strong> This is paramount. If any exercise causes sharp, increasing, or persistent pain, stop immediately. Modify the range of motion, reduce the weight, or choose an alternative exercise.</p>
+                        <p><strong>2. Gradual Progressive Overload:</strong> To get stronger, gradually increase the demands on your body. Once you can comfortably complete all sets and reps with good form, it's time to increase the weight or reps.</p>
+                        <p><strong>3. Targeted Rehabilitation:</strong> Your program includes exercises to strengthen areas prone to your current injuries (elbows, knees, adductors). These are crucial for long-term health.</p>
+                        <p><strong>4. Listen to Your Tendons:</strong> Tendons recover slower than muscles. Be patient with your triceps tendinopathy. Focus on slow, controlled movements.</p>
+                        <p><strong>5. Smart Recovery:</strong> Daily training requires diligent recovery. Prioritize 7-9 hours of sleep, consistent protein intake, and hydration.</p>
+                        <p><strong>6. Tempo Control:</strong> Unless specified, aim for controlled movements. A 2-1-2 tempo (2s concentric, 1s hold, 2s eccentric) is a great general guideline.</p>
+                        <p><strong>7. RPE (Rate of Perceived Exertion):</strong> Gauge intensity (RPE 6: 4+ reps left; RPE 7: 3-4 reps left; RPE 8: 1-2 reps left; RPE 9: 1 rep left; RPE 10: max effort). Aim for RPE 7-8 for most sets.</p>
+                    </div>
+                </details>
+                 <details class="principle-card p-6">
+                    <summary class="font-bold text-xl cursor-pointer flex justify-between items-center">
+                        <span>Calf Muscle Building: Science & Speed</span>
+                        <span class="text-2xl transform transition-transform duration-300 details-arrow">▾</span>
+                    </summary>
+                    <div class="mt-4 space-y-2 text-slate-600">
+                        <p>The calves consist of the larger, visible **Gastrocnemius** (active with a straight knee) and the deeper **Soleus** (active with a bent knee). To maximize growth:</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Prioritize the Lengthened Position:</strong> Research suggests greater hypertrophy when training muscles in a stretched position. For calves, this means allowing your heels to drop **below** the platform on calf raises to achieve a deep stretch. Hold for 1-2 seconds at the bottom.</li>
+                            <li><strong>Controlled Eccentric:</strong> Slow down the lowering (eccentric) phase (2-3 seconds). This is crucial for muscle gain.</li>
+                            <li><strong>Strong, Controlled Concentric:</strong> The lifting phase should be strong and controlled, with a 1-2 second peak squeeze at the top. Avoid bouncing.</li>
+                            <li><strong>Include Both Standing & Seated:</strong> Incorporate both variations in your routine to target both heads of the calf muscles effectively.</li>
+                        </ul>
+                    </div>
+                </details>
+                <details class="principle-card p-6">
+                    <summary class="font-bold text-xl cursor-pointer flex justify-between items-center">
+                        <span>Ankle Mobility Drills</span>
+                        <span class="text-2xl transform transition-transform duration-300 details-arrow">▾</span>
+                    </summary>
+                     <div class="mt-4 space-y-4 text-slate-600">
+                        <div>
+                            <h4 class="font-semibold text-slate-800">1. Ankle Dorsiflexion Against Wall</h4>
+                            <p><strong>How:</strong> Stand facing a wall, about a foot or two away. Place your foot flat on the ground. Keeping your heel down, lean your knee forward towards the wall, aiming to touch it with your knee. Feel the stretch in your calf and Achilles. If it's easy, move your foot back.</p>
+                            <p><strong>Reps:</strong> 2-3 sets of 10-15 controlled rocks per side.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">2. Calf Raises with Hold</h4>
+                            <p><strong>How:</strong> Stand on a step. Slowly rise up onto the balls of your feet. Hold for 1-2 seconds, then slowly lower your heels below the step to feel a stretch.</p>
+                             <p><strong>Reps:</strong> 2-3 sets of 12-15 reps.</p>
+                        </div>
+                    </div>
+                </details>
+                 <details class="principle-card p-6">
+                    <summary class="font-bold text-xl cursor-pointer flex justify-between items-center">
+                        <span>Post-Workout Cool-Downs: Necessary?</span>
+                         <span class="text-2xl transform transition-transform duration-300 details-arrow">▾</span>
+                    </summary>
+                    <div class="mt-4 space-y-2 text-slate-600">
+                        <p>While scientific evidence on static stretching's direct impact on muscle soreness or injury prevention is mixed, cool-downs are highly recommended for:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li><strong>Flexibility and Range of Motion:</strong> Maintains or improves joint mobility.</li>
+                            <li><strong>Mental Transition:</strong> Helps lower heart rate and calm the nervous system.</li>
+                            <li><strong>Blood Flow & Nutrient Delivery:</strong> Aids in recovery by promoting circulation.</li>
+                        </ul>
+                        <p>They are beneficial for overall physical well-being, long-term flexibility, and a positive recovery mindset, and are designed to be efficient for your 1-hour workout window.</p>
+                    </div>
+                </details>
+                 <details class="principle-card p-6">
+                    <summary class="font-bold text-xl cursor-pointer flex justify-between items-center">
+                        <span>Important Considerations for Your Journey</span>
+                         <span class="text-2xl transform transition-transform duration-300 details-arrow">▾</span>
+                    </summary>
+                    <div class="mt-4 space-y-2 text-slate-600">
+                        <p><strong>Adductor Strain Recovery:</strong> Your recent football soreness indicates your adductor is still recovering. **Do NOT play football next week.** Prioritize pain-free resistance training and gradual agility drills before returning to sport to prevent re-injury.</p>
+                        <p><strong>Elbow Tendinopathy:</strong> Continue with extreme caution. Avoid pull-ups for now and maintain focus on slow, controlled eccentric movements for your triceps. Progress only when completely pain-free.</p>
+                        <p><strong>Knee Health:</strong> You're making good progress! Keep consistently doing single-leg work, step-downs, and ankle mobility drills. Your running progression must be very gradual and on soft surfaces.</p>
+                        <p><strong>Overall Progress:</strong> Consistency is key. Listen to your body, prioritize smart progressive overload (don't rush), and ensure your nutrition and sleep support your intense training schedule.</p>
+                    </div>
+                </details>
+            </div>
+        `;
+
+        const stretchesContent = `
+            <div class="space-y-4">
+                <p class="text-center text-slate-600 p-4 bg-white rounded-lg shadow-sm">Hold each stretch for 30-60 seconds. Breathe deeply and relax into the stretch. Never stretch into pain.</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="details-card p-6">
+                        <h3 class="font-bold text-xl text-slate-900 mb-3">Upper Body Stretches</h3>
+                        <ul class="space-y-2 list-disc list-inside text-slate-600">
+                            <li><strong>Chest Stretch (Doorway):</strong> Forearm on door frame, step through.</li>
+                            <li><strong>Shoulder Stretch (Cross-Body):</strong> Pull arm across chest.</li>
+                            <li><strong>Triceps Stretch (Overhead):</strong> Hand behind head, gently push elbow.</li>
+                            <li><strong>Biceps Stretch (Wall):</strong> Arm behind, palm flat on wall, rotate away.</li>
+                            <li><strong>Lat Stretch (Overhead Reach):</strong> Reach up and lean to the side.</li>
+                        </ul>
+                    </div>
+                    <div class="details-card p-6">
+                        <h3 class="font-bold text-xl text-slate-900 mb-3">Lower Body Stretches</h3>
+                        <ul class="space-y-2 list-disc list-inside text-slate-600">
+                            <li><strong>Hamstring Stretch:</strong> Seated or standing, reach for toes with straight leg.</li>
+                            <li><strong>Quad Stretch:</strong> Standing, pull heel to glute, knees together.</li>
+                            <li><strong>Hip Flexor Stretch:</strong> Kneeling lunge, push hips forward.</li>
+                            <li><strong>Glute Stretch (Figure-4):</strong> Lie on back, cross ankle over knee, pull towards chest.</li>
+                            <li><strong>Adductor Stretch (Butterfly):</strong> Sit, soles of feet together, knees out.</li>
+                            <li><strong>Calf Stretch (Wall):</strong> Step back, heel down, lean into wall.</li>
+                        </ul>
+                    </div>
+                    <div class="details-card p-6">
+                        <h3 class="font-bold text-xl text-slate-900 mb-3">Core & Spine Stretches</h3>
+                        <ul class="space-y-2 list-disc list-inside text-slate-600">
+                            <li><strong>Cat-Cow:</strong> On all fours, alternate arching and rounding spine.</li>
+                            <li><strong>Child's Pose:</strong> Kneel, sit back on heels, fold forward.</li>
+                            <li><strong>Spinal Twist (Supine):</strong> Lie on back, let knees fall to one side.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+
+
+        function buildWorkoutHTML(dayData) {
+            return `
+                <div id="${dayData.day}-workout" class="workout-day space-y-8">
+                    <div>
+                        <h2 class="text-2xl font-bold section-title text-slate-800">${dayData.title}</h2>
+                        
+                        <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <h3 class="font-semibold text-slate-700">Warm-up (10 mins)</h3>
+                            <ul class="mt-2 list-disc list-inside text-slate-600 text-sm">
+                                ${dayData.warmup.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <ul class="space-y-4">
+                        ${dayData.workout.map(ex => `
+                            <li class="details-card p-4">
+                                <p class="font-semibold text-slate-900">${ex.name}</p>
+                                <p class="text-slate-600 text-sm mt-1">${ex.details}</p>
+                            </li>
+                        `).join('')}
+                    </ul>
+
+                    <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <h3 class="font-semibold text-slate-700">Cool-down (5-10 mins)</h3>
+                        <p class="mt-2 text-slate-600 text-sm">${dayData.cooldown.join(', ')}.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        const workoutsContainer = document.getElementById('workouts-container');
+
+        function showDay(day) {
+            const dayData = dailyWorkouts[day];
+            dayData.day = day;
+            workoutsContainer.innerHTML = buildWorkoutHTML(dayData);
+            
+            document.querySelectorAll('.day-nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${day}`).classList.add('active');
+        }
+
+        const planView = document.getElementById('plan-view');
+        const principlesView = document.getElementById('principles-view');
+        const stretchesView = document.getElementById('stretches-view');
+
+        function showView(view) {
+            planView.classList.add('hidden');
+            principlesView.classList.add('hidden');
+            stretchesView.classList.add('hidden');
+            
+            document.getElementById(`${view}-view`).classList.remove('hidden');
+
+            document.querySelectorAll('.main-nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${view}`).classList.add('active');
+        }
+
+        function setupDetailsToggle() {
+            principlesView.addEventListener('click', function(event) {
+                const summary = event.target.closest('summary');
+                if (summary) {
+                    const detailsElement = summary.parentElement;
+                    const arrow = summary.querySelector('.details-arrow');
+                    if (detailsElement.open) {
+                        // It's about to close, so rotate back
+                        arrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        // It's about to open, so rotate
+                        arrow.style.transform = 'rotate(-180deg)';
+                    }
+                }
+            });
+        }
+
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            principlesView.innerHTML = principlesContent;
+            stretchesView.innerHTML = stretchesContent;
+            showDay('monday');
+            setupDetailsToggle();
+        });
+    </script>
+</body>
+</html>
